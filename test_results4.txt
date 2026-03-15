@@ -1,0 +1,105 @@
+﻿
+========================================
+ NEXORA TRADING LOGIC - DEEP TEST SUITE
+========================================
+
+=== TEST 1: LOGIN ===
+[PASS] Investor1 token: eyJhbGciOiJIUzM4NCJ9...
+[PASS] Investor2 token: eyJhbGciOiJIUzM4NCJ9...
+[PASS] Wrong password correctly rejected
+
+=== TEST 2: WALLET OPERATIONS ===
+Inv1 Balance: 659102.50, Reserved: 0.00
+After Deposit 50000: Balance = 709102.50
+[PASS] Deposit succeeded
+After Withdraw 10000: Balance = 699102.50
+[PASS] Withdrawal succeeded
+[PASS] Over-withdrawal correctly rejected: HTTP BadRequest: 
+[PASS] Negative deposit correctly rejected
+[PASS] Zero deposit correctly rejected
+
+=== TEST 3: MARKET DATA ===
+Total stocks: 6
+  TFLOW | Price: 245.50 | Status: ACTIVE
+  HSYNC | Price: 89.75 | Status: ACTIVE
+  FMTRIC | Price: 178.30 | Status: ACTIVE
+  EDUHB | Price: 156.00 | Status: ACTIVE
+  GRNEV | Price: 312.40 | Status: ACTIVE
+  AGRIX | Price: 67.20 | Status: ACTIVE
+[PASS] All 6 stocks loaded
+
+=== TEST 4: HOLDINGS ===
+Investor1 holdings: 4
+  TFLOW | Qty: 100 | AvgCost: 200.00 | P&L: 4550.00
+  HSYNC | Qty: 10 | AvgCost: 89.75 | P&L: 0.00
+  FMTRIC | Qty: 50 | AvgCost: 150.00 | P&L: 1415.00
+  GRNEV | Qty: 30 | AvgCost: 280.00 | P&L: 972.00
+[FAIL] Expected 3 holdings, got 4
+
+=== TEST 5: BUY ORDER (MARKET) ===
+Wallet before BUY: Balance=699102.50, Reserved=0.00
+Buying HSYNC (id=2) at market price 89.75
+[PASS] Market BUY order placed: Status=EXECUTED, Filled=10/10
+Wallet after BUY: Balance=698205.00, Reserved=0.00
+[PASS] HSYNC added to holdings: Qty=20
+
+=== TEST 6: SELL ORDER (MARKET) ===
+Selling 10 TFLOW (id=1) at market price 245.50
+[PASS] Market SELL order placed: Status=EXECUTED, Filled=10/10
+TFLOW holding after sell: Qty=90
+[PASS] TFLOW reduced from 100 to 90
+
+=== TEST 7: LIMIT ORDER (BUY) ===
+[PASS] Limit BUY placed: Status=PENDING, Price=80
+
+=== TEST 8: CROSS-USER ORDER MATCHING ===
+[PASS] Inv2 Limit SELL placed: Status=PENDING, Filled=0
+
+=== TEST 9: CANCEL ORDER ===
+[PASS] Order cancelled successfully, refund applied
+
+=== TEST 10: EDGE CASES ===
+[PASS] Sell more than owned correctly rejected
+[PASS] Buy with insufficient balance correctly rejected
+[PASS] Invalid stock ID correctly rejected
+[FAIL] Should reject zero quantity!
+
+=== TEST 11: KYC PENDING USER ===
+[FAIL] KYC-pending user should not be able to trade!
+
+=== TEST 12: ORDER HISTORY ===
+Investor1 total orders: 8
+  ID=15 BUY TFLOW Qty=0 Filled=0 Price=245.50 Status=PENDING
+  ID=14 BUY TFLOW Qty=5 Filled=0 Price=200.00 Status=CANCELLED
+  ID=12 BUY HSYNC Qty=20 Filled=0 Price=80.00 Status=PENDING
+  ID=11 SELL TFLOW Qty=10 Filled=10 Price=245.50 Status=EXECUTED
+  ID=10 BUY HSYNC Qty=10 Filled=10 Price=89.75 Status=EXECUTED
+  ID=9 BUY HSYNC Qty=10 Filled=10 Price=89.75 Status=EXECUTED
+  ID=2 BUY FMTRIC Qty=50 Filled=50 Price=150.00 Status=EXECUTED
+  ID=1 BUY TFLOW Qty=100 Filled=100 Price=200.00 Status=EXECUTED
+
+=== TEST 13: TRANSACTION HISTORY ===
+Total transactions: 13
+  TRADE_SELL | Amount=2455.00 | Before=698205.00 -> After=700660.00 | SELL 10 TFLOW @ â?1245.50
+  TRADE_BUY | Amount=897.50 | Before=699102.50 -> After=698205.00 | BUY 10 HSYNC @ â?189.75
+  WITHDRAWAL | Amount=10000.00 | Before=709102.50 -> After=699102.50 | Withdrawal to bank
+  DEPOSIT | Amount=50000.00 | Before=659102.50 -> After=709102.50 | Deposit via UPI
+  WITHDRAWAL | Amount=10000.00 | Before=669102.50 -> After=659102.50 | Withdrawal to bank
+
+=== TEST 14: IPO LISTINGS ===
+Total IPO listings: 2
+  GRNEV | Price=280.00 | Shares=800000 | Status=UPCOMING
+  TFLOW | Price=200.00 | Shares=500000 | Status=LISTED
+
+=== FINAL STATE ===
+Final Wallet: Balance=700660.00, Reserved=1600.00
+Final Holdings:
+  TFLOW | Qty=90 | AvgCost=200.00 | CurrentValue=22095.00 | P&L=4095.00
+  HSYNC | Qty=20 | AvgCost=89.75 | CurrentValue=1795.00 | P&L=0.00
+  FMTRIC | Qty=50 | AvgCost=150.00 | CurrentValue=8915.00 | P&L=1415.00
+  GRNEV | Qty=30 | AvgCost=280.00 | CurrentValue=9372.00 | P&L=972.00
+
+========================================
+ TEST SUITE COMPLETE
+========================================
+

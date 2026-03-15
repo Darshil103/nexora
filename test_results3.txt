@@ -1,0 +1,100 @@
+﻿
+========================================
+ NEXORA TRADING LOGIC - DEEP TEST SUITE
+========================================
+
+=== TEST 1: LOGIN ===
+[PASS] Investor1 token: eyJhbGciOiJIUzM4NCJ9...
+[PASS] Investor2 token: eyJhbGciOiJIUzM4NCJ9...
+[PASS] Wrong password correctly rejected
+
+=== TEST 2: WALLET OPERATIONS ===
+Inv1 Balance: 619102.50, Reserved: 0.00
+After Deposit 50000: Balance = 669102.50
+[PASS] Deposit succeeded
+After Withdraw 10000: Balance = 659102.50
+[PASS] Withdrawal succeeded
+[PASS] Over-withdrawal correctly rejected: HTTP BadRequest: 
+[PASS] Negative deposit correctly rejected
+[PASS] Zero deposit correctly rejected
+
+=== TEST 3: MARKET DATA ===
+Total stocks: 6
+  TFLOW | Price: 245.50 | Status: ACTIVE
+  HSYNC | Price: 89.75 | Status: ACTIVE
+  FMTRIC | Price: 178.30 | Status: ACTIVE
+  EDUHB | Price: 156.00 | Status: ACTIVE
+  GRNEV | Price: 312.40 | Status: ACTIVE
+  AGRIX | Price: 67.20 | Status: ACTIVE
+[PASS] All 6 stocks loaded
+
+=== TEST 4: HOLDINGS ===
+Investor1 holdings: 4
+  TFLOW | Qty: 100 | AvgCost: 200.00 | P&L: 4550.00
+  HSYNC | Qty: 10 | AvgCost: 89.75 | P&L: 0.00
+  FMTRIC | Qty: 50 | AvgCost: 150.00 | P&L: 1415.00
+  GRNEV | Qty: 30 | AvgCost: 280.00 | P&L: 972.00
+[FAIL] Expected 3 holdings, got 4
+
+=== TEST 5: BUY ORDER (MARKET) ===
+Wallet before BUY: Balance=659102.50, Reserved=0.00
+Buying HSYNC (id=2) at market price 89.75
+[FAIL] BUY order failed: HTTP BadRequest: 
+Wallet after BUY: Balance=659102.50, Reserved=0.00
+[PASS] HSYNC added to holdings: Qty=10
+
+=== TEST 6: SELL ORDER (MARKET) ===
+Selling 10 TFLOW (id=1) at market price 245.50
+[FAIL] SELL order failed: HTTP BadRequest: 
+TFLOW holding after sell: Qty=100
+[INFO] TFLOW quantity: 100
+
+=== TEST 7: LIMIT ORDER (BUY) ===
+[FAIL] Limit BUY failed: HTTP BadRequest: 
+
+=== TEST 8: CROSS-USER ORDER MATCHING ===
+[FAIL] Inv2 SELL failed: HTTP BadRequest: 
+
+=== TEST 9: CANCEL ORDER ===
+[FAIL] Could not place order to cancel: HTTP BadRequest: 
+
+=== TEST 10: EDGE CASES ===
+[PASS] Sell more than owned correctly rejected
+[PASS] Buy with insufficient balance correctly rejected
+[PASS] Invalid stock ID correctly rejected
+[PASS] Zero quantity correctly rejected
+
+=== TEST 11: KYC PENDING USER ===
+[PASS] KYC-pending user correctly blocked from trading
+
+=== TEST 12: ORDER HISTORY ===
+Investor1 total orders: 3
+  ID=9 BUY HSYNC Qty=10 Filled=10 Price=89.75 Status=EXECUTED
+  ID=2 BUY FMTRIC Qty=50 Filled=50 Price=150.00 Status=EXECUTED
+  ID=1 BUY TFLOW Qty=100 Filled=100 Price=200.00 Status=EXECUTED
+
+=== TEST 13: TRANSACTION HISTORY ===
+Total transactions: 9
+  WITHDRAWAL | Amount=10000.00 | Before=669102.50 -> After=659102.50 | Withdrawal to bank
+  DEPOSIT | Amount=50000.00 | Before=619102.50 -> After=669102.50 | Deposit via UPI
+  TRADE_BUY | Amount=897.50 | Before=620000.00 -> After=619102.50 | BUY 10 HSYNC @ â?189.75
+  WITHDRAWAL | Amount=10000.00 | Before=630000.00 -> After=620000.00 | Withdrawal to bank
+  DEPOSIT | Amount=50000.00 | Before=580000.00 -> After=630000.00 | Deposit via UPI
+
+=== TEST 14: IPO LISTINGS ===
+Total IPO listings: 2
+  GRNEV | Price=280.00 | Shares=800000 | Status=UPCOMING
+  TFLOW | Price=200.00 | Shares=500000 | Status=LISTED
+
+=== FINAL STATE ===
+Final Wallet: Balance=659102.50, Reserved=0.00
+Final Holdings:
+  TFLOW | Qty=100 | AvgCost=200.00 | CurrentValue=24550.00 | P&L=4550.00
+  HSYNC | Qty=10 | AvgCost=89.75 | CurrentValue=897.50 | P&L=0.00
+  FMTRIC | Qty=50 | AvgCost=150.00 | CurrentValue=8915.00 | P&L=1415.00
+  GRNEV | Qty=30 | AvgCost=280.00 | CurrentValue=9372.00 | P&L=972.00
+
+========================================
+ TEST SUITE COMPLETE
+========================================
+

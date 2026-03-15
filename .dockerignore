@@ -1,0 +1,11 @@
+target/
+.git/
+.mvn/
+.gradle/
+bin/
+build/
+.idea/
+.vscode/
+*.log
+*.jar
+*.war
